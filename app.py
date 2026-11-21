@@ -75,6 +75,22 @@ html, body, [class*="css"] { font-family: 'Outfit', sans-serif; }
 [data-baseweb="input"] button, [data-baseweb="input"] svg { color: #7c3aed !important; fill: #7c3aed !important; }
 .stTextArea label, .stTextArea label p { color: #4c1d95 !important; font-weight: 600; }
 .stProgress > div > div > div > div { background: linear-gradient(90deg,#22c55e,#eab308,#f43f5e); }
+/* Ana alandaki tüm yazılar siyah */
+[data-testid="stMain"] p, [data-testid="stMain"] li, [data-testid="stMain"] label,
+[data-testid="stMain"] span, [data-testid="stMain"] h3, [data-testid="stMain"] b,
+[data-testid="stMain"] [data-testid="stMarkdownContainer"],
+[data-testid="stStatusWidget"], [data-testid="stExpander"] * { color: #000000 !important; }
+.stTextArea textarea, .stTextInput input, [data-baseweb="select"] * {
+  color: #000000 !important; -webkit-text-fill-color: #000000 !important; }
+[data-testid="stMain"] .hero h1, [data-testid="stMain"] .hero p, [data-testid="stMain"] span.badge,
+.stButton>button, [data-testid="stMain"] .stButton>button * { color: #ffffff !important; }
+[data-testid="stMain"] span.pos { color: #065f46 !important; }
+[data-testid="stMain"] span.neg { color: #9f1239 !important; }
+/* Analiz sonuç kartları: tüm yazılar siyah ve tam opak */
+[data-testid="stMain"] div.card, [data-testid="stMain"] div.card h3, [data-testid="stMain"] div.card p,
+[data-testid="stMain"] div.card b, [data-testid="stMain"] div.card i {
+  color: #000000 !important; opacity: 1 !important; }
+[data-testid="stMain"] div.card span.badge { color: #ffffff !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -191,20 +207,27 @@ if st.button("🚀 Analiz Et ve Öğret", type="primary", use_container_width=Tr
 
             duygu = s.get("genel_duygu", "Nötr")
             skor = int(s.get("guven_skoru", 0))
-            st.markdown(f"""<div class="card c1"><h3>🎯 Genel Duygu</h3>
-                <span class="badge" style="background:{RENK.get(duygu, RENK['Nötr'])}">{duygu}</span>
-                &nbsp; Güven Skoru: <b>%{skor}</b></div>""", unsafe_allow_html=True)
+            K = "color:#000000 !important;opacity:1;"
+            st.markdown(
+                f'<div class="card c1" style="{K}"><h3 style="{K}">🎯 Genel Duygu</h3>'
+                f'<span class="badge" style="background:{RENK.get(duygu, RENK["Nötr"])}">{duygu}</span>'
+                f'&nbsp; <span style="{K}">Güven Skoru: <b style="{K}">%{skor}</b></span></div>',
+                unsafe_allow_html=True)
             st.progress(min(max(skor, 0), 100) / 100)
 
-            pos = "".join(f'<span class="chip pos">✅ {k}</span>' for k in s.get("olumlu_ipuclari", [])) or "<i>Yok</i>"
-            neg = "".join(f'<span class="chip neg">❌ {k}</span>' for k in s.get("olumsuz_ipuclari", [])) or "<i>Yok</i>"
-            st.markdown(f"""<div class="card c2"><h3>🔑 Anahtar İpuçları</h3>
-                <p><b>Olumlu duygu yaratanlar:</b><br>{pos}</p>
-                <p><b>Olumsuz duygu yaratanlar:</b><br>{neg}</p>
-                <p style="opacity:.85">{s.get('ipucu_aciklamasi', '')}</p></div>""", unsafe_allow_html=True)
+            pos = "".join(f'<span class="chip pos">✅ {k}</span>' for k in s.get("olumlu_ipuclari", [])) or f'<i style="{K}">Yok</i>'
+            neg = "".join(f'<span class="chip neg">❌ {k}</span>' for k in s.get("olumsuz_ipuclari", [])) or f'<i style="{K}">Yok</i>'
+            st.markdown(
+                f'<div class="card c2" style="{K}"><h3 style="{K}">🔑 Anahtar İpuçları</h3>'
+                f'<p style="{K}"><b style="{K}">Olumlu duygu yaratanlar:</b><br>{pos}</p>'
+                f'<p style="{K}"><b style="{K}">Olumsuz duygu yaratanlar:</b><br>{neg}</p>'
+                f'<p style="{K}">{s.get("ipucu_aciklamasi", "")}</p></div>',
+                unsafe_allow_html=True)
 
-            st.markdown(f"""<div class="card c3"><h3>👩‍🏫 Eğitmen Notu</h3>
-                <p>{s.get('egitmen_notu', '')}</p></div>""", unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="card c3" style="{K}"><h3 style="{K}">👩‍🏫 Eğitmen Notu</h3>'
+                f'<p style="{K}">{s.get("egitmen_notu", "")}</p></div>',
+                unsafe_allow_html=True)
         except json.JSONDecodeError:
             st.error("Model yanıtı çözümlenemedi. Lütfen tekrar deneyin.")
         except Exception as e:
